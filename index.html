@@ -1,0 +1,382 @@
+<title>Investie Bestie Calculator</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,600..900,100&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one warm single column. Calculator on top (the hero IS the tool), fund picker as sticker-cards below, receipts last. */
+:root{
+  --bg:#FFFFFF;        /* white */
+  --card:#F9F5EE;      /* pale beige, lighter */
+  --ink:#1B1A17;
+  --muted:#6F6861;
+  --line:#EAE2D6;
+  --chart-grid:#EAE2D6;
+  --accent-ink:#FFFFFF;
+  /* Forest: green accent, pale mint + mustard + blush chips */
+  --accent:#14603C;
+  --lilac:#D7F0E0;
+  --butter:#FFD166;
+  --mint:#F8C8DC;
+  --display:"Fraunces",Georgia,serif;
+  --body:"Hanken Grotesk","Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#161411; --card:#242019; --ink:#F5EFE6; --muted:#B5ACA0; --line:#3B352C; --chart-grid:#3B352C;
+    --accent:#5FD39A; --accent-ink:#161411; --lilac:#1F3A2C; --butter:#5A4414; --mint:#4A2838;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#161411; --card:#242019; --ink:#F5EFE6; --muted:#B5ACA0; --line:#3B352C; --chart-grid:#3B352C;
+  --accent:#5FD39A; --accent-ink:#161411; --lilac:#1F3A2C; --butter:#5A4414; --mint:#4A2838;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;padding-inline:16px;padding-block:28px 56px}
+.wrap{max-width:960px;margin-inline:auto;display:grid;gap:28px}
+h1,h2,h3{font-family:var(--display);font-variation-settings:"SOFT" 100;text-wrap:balance;margin:0;line-height:1.05}
+h1{font-size:clamp(2.2rem,6vw,3.6rem);font-weight:700}
+h2{font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:700}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:0}
+.eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.lede{color:var(--muted);max-width:60ch;font-size:1.05rem}
+.hero{display:grid;gap:12px}
+.hero em{font-style:normal;background:linear-gradient(transparent 55%,var(--butter) 55%);padding-inline:2px}
+
+/* calculator card */
+.calc{background:var(--card);border-radius:28px;padding:24px;display:grid;gap:20px;box-shadow:0 10px 40px rgba(20,20,20,.06)}
+.inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:640px){.inputs{grid-template-columns:1fr}}
+.field{display:grid;gap:6px;min-width:0;align-content:start}
+.field label{font-weight:700;font-size:.9rem}
+.field .hint{font-size:.8rem;color:var(--muted)}
+.money{display:flex;align-items:center;gap:4px;border:1.5px solid var(--line);border-radius:12px;padding:0 12px;background:var(--bg);min-width:0;overflow:hidden}
+.money span{font-weight:700;color:var(--muted);flex:0 0 auto;white-space:nowrap;font-size:.8rem}
+.money input{flex:1 1 0;min-width:0;width:0;border:0;background:transparent;font:inherit;font-weight:700;font-size:1.25rem;padding:10px 6px;color:var(--ink);font-variant-numeric:tabular-nums}
+.money input:focus{outline:none}
+.money:focus-within{border-color:var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.years-val{font-family:var(--display);font-size:1.6rem;font-weight:700}
+
+.result{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:start}
+@media (max-width:700px){.result{grid-template-columns:1fr}}
+.big{display:grid;gap:4px}
+.big .num{font-family:var(--display);font-weight:700;font-size:clamp(2.4rem,7vw,4rem);line-height:1;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.big .in{color:var(--muted)}
+.big .in b{color:var(--ink)}
+.split{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.chip{border-radius:999px;padding:6px 12px;font-size:.85rem;font-weight:700;background:var(--lilac);color:var(--ink);border:1px solid var(--line)}
+.chip.mint{background:var(--mint)}
+.chip.butter{background:var(--butter)}
+.chart{width:100%;height:auto;display:block}
+.chart text{font-family:var(--body);font-size:11px;fill:var(--muted);font-weight:700}
+.chart .grid{stroke:var(--chart-grid);stroke-width:1}
+.chart .line{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round}
+.chart .area{fill:var(--accent);opacity:.14}
+.chart .cash{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:4 5}
+.chart .dot{fill:var(--accent);stroke:var(--card);stroke-width:3}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.8rem;color:var(--muted);font-weight:700}
+.legend i{display:inline-block;width:18px;height:3px;border-radius:2px;background:var(--accent);vertical-align:middle;margin-right:6px}
+.legend i.c{background:repeating-linear-gradient(90deg,var(--muted) 0 4px,transparent 4px 8px)}
+
+/* fund picker */
+.funds{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.fund{text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:18px;padding:18px;display:grid;gap:10px;cursor:pointer;font:inherit;color:inherit;transition:transform .15s,border-color .15s}
+.fund:hover{transform:translateY(-2px)}
+.fund:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.fund[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.fund .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.fund .tick{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.06em}
+.fund .rate{font-family:var(--display);font-weight:700;font-size:1.5rem;color:var(--accent)}
+.fund .rate small{font-family:var(--body);font-size:.7rem;color:var(--muted);font-weight:700;display:block;letter-spacing:.08em;text-transform:uppercase}
+.fund .what{color:var(--muted);font-size:.92rem}
+.fund .beat{font-size:.85rem;font-weight:700;background:var(--mint);color:var(--ink);border-radius:999px;padding:5px 10px;justify-self:start}
+.fund .vibe{font-size:.8rem;font-weight:700;color:var(--muted)}
+.fund .vibe b{color:var(--ink)}
+
+/* compare table */
+.table{overflow-x:auto;border-radius:18px;background:var(--card);padding:6px}
+table{width:100%;border-collapse:collapse;min-width:520px}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+th{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+td.n{text-align:right;font-weight:700}
+tr:last-child td{border-bottom:0}
+tr.sel td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.bar{height:8px;border-radius:99px;background:var(--lilac);min-width:4px}
+.bar.hot{background:var(--accent)}
+
+.why{display:grid;gap:14px;background:var(--card);border-radius:28px;padding:24px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.stat{background:var(--bg);border-radius:18px;padding:14px;display:grid;gap:2px}
+.stat .v{font-family:var(--display);font-size:2rem;font-weight:700;line-height:1;color:var(--accent)}
+.stat .l{font-size:.82rem;color:var(--muted);font-weight:700}
+.fine{font-size:.82rem;color:var(--muted);max-width:72ch}
+.fine a{color:var(--accent);font-weight:700}
+.foot{display:grid;gap:8px}
+
+/* home vs invest */
+.home{display:grid;gap:20px;background:var(--card);border-radius:28px;padding:24px}
+.home .inputs{grid-template-columns:repeat(4,minmax(0,1fr))}
+.home .chartbox{max-width:560px}
+@media (max-width:900px){.home .inputs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.home .inputs{grid-template-columns:1fr}}
+.pct input{text-align:right}
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:640px){.verdict{grid-template-columns:1fr}}
+.side{border-radius:16px;padding:18px;background:var(--bg);border:1.5px solid var(--line);display:grid;gap:6px}
+.side.win{border-color:var(--accent)}
+.side .t{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.side .v{font-family:var(--display);font-weight:700;font-size:clamp(1.8rem,5vw,2.6rem);line-height:1;font-variant-numeric:tabular-nums}
+.side.win .v{color:var(--accent)}
+.side .d{font-size:.85rem;color:var(--muted)}
+.callout{background:var(--accent);color:var(--accent-ink);border-radius:16px;padding:14px 16px;font-weight:700}
+.chart .line2{fill:none;stroke:var(--muted);stroke-width:3;stroke-linecap:round}
+.legend i.l2{background:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){.fund{transition:none}}
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Investie bestie calculator</p>
+    <h1>What could your money look like in <em>10 years</em>?</h1>
+    <p class="lede">See how your money could grow if you pick some index funds today. No jargon, no stock picking, no boys' club. Just the boring funds that quietly beat the professionals.</p>
+  </header>
+
+  <section class="calc" aria-label="Calculator">
+    <div class="inputs">
+      <div class="field">
+        <label for="lump">Starting with</label>
+        <div class="money"><span>$</span><input id="lump" type="text" inputmode="numeric" value="5,000" aria-describedby="lump-h"></div>
+        <span class="hint" id="lump-h">A one-off lump sum today. Zero is fine.</span>
+      </div>
+      <div class="field">
+        <label for="monthly">Adding each month</label>
+        <div class="money"><span>$</span><input id="monthly" type="text" inputmode="numeric" value="300" aria-describedby="monthly-h"></div>
+        <span class="hint" id="monthly-h">The habit matters more than the amount.</span>
+      </div>
+      <div class="field">
+        <label for="years">For how long <span class="years-val" id="years-val">10 yrs</span></label>
+        <input id="years" type="range" min="1" max="40" value="10">
+        <span class="hint">Slide it. 10 years is the default. 30 is where it gets silly.</span>
+      </div>
+    </div>
+
+    <div class="result">
+      <div class="big">
+        <p class="eyebrow" id="fund-label">S&amp;P 500 · VOO / SPY / CSPX</p>
+        <p class="num" id="fv">$0</p>
+        <p class="in">You'd have put in <b id="contrib">$0</b>. The market did the other <b id="growth">$0</b>.</p>
+        <div class="split">
+          <span class="chip">Your money: <span id="c-contrib">$0</span></span>
+          <span class="chip mint">Growth: <span id="c-growth">$0</span></span>
+          <span class="chip butter">Savings account would be: <span id="c-cash">$0</span></span>
+        </div>
+      </div>
+      <div>
+        <svg class="chart" id="chart" viewBox="0 0 440 240" role="img" aria-label="Growth over time"></svg>
+        <div class="legend"><span><i></i>Invested in the index fund</span><span><i class="c"></i>Left in a 2% savings account</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="hero" style="margin-bottom:16px">
+      <p class="eyebrow">Pick your fund</p>
+      <h2>The index funds that beat the pros</h2>
+      <p class="lede">Every year S&amp;P runs a scorecard called SPIVA that checks how many professional fund managers beat a plain index. These are the indexes most of them lose to over 15 years. The return shown is the long-run average, not a promise.</p>
+    </div>
+    <div class="funds" id="funds"></div>
+  </section>
+
+  <section>
+    <div class="hero" style="margin-bottom:16px">
+      <p class="eyebrow">Side by side</p>
+      <h2>Same money, every fund</h2>
+    </div>
+    <div class="table"><table id="cmp"><thead><tr><th>Fund</th><th>Avg return</th><th style="text-align:right">You'd have</th><th style="width:34%">&nbsp;</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section class="why">
+    <p class="eyebrow">Why index funds</p>
+    <h2>The pros mostly lose to the index</h2>
+    <div class="stats">
+      <div class="stat"><span class="v">79%</span><span class="l">of active US large-cap funds lost to the S&amp;P 500 in 2025</span></div>
+      <div class="stat"><span class="v">90%</span><span class="l">lost to it over 15 years</span></div>
+      <div class="stat"><span class="v">93%</span><span class="l">lost to it over 20 years</span></div>
+      <div class="stat"><span class="v">76%</span><span class="l">of active global equity funds lost to a world index in 2025</span></div>
+    </div>
+    <p class="fine">So when someone charges you 1–2% a year to "pick winners", the odds say you'd have done better buying the whole market for about 0.03–0.2% and going to brunch. Figures from the <a href="https://www.spglobal.com/spdji/en/spiva/article/spiva-us-year-end-2025/">SPIVA U.S. Year-End 2025 scorecard</a> and the <a href="https://www.spglobal.com/spdji/en/spiva/article/us-persistence-scorecard/">Persistence Scorecard</a>.</p>
+  </section>
+
+  <section class="home" aria-label="Buy a home or invest">
+    <div class="hero">
+      <p class="eyebrow">Buy a home or invest?</p>
+      <h2>Home ownership may not actually lead to higher returns</h2>
+      <p class="lede">Put in a home you're eyeing. We compare two versions of you: one who buys it, and one who keeps renting and invests the deposit and buying costs in the fund you picked above. Whoever pays less each month invests the difference. Same time horizon as the slider up top.</p>
+    </div>
+    <div class="inputs">
+      <div class="field"><label for="h-price">Home price</label><div class="money"><span>$</span><input id="h-price" type="text" inputmode="numeric" value="800,000"></div></div>
+      <div class="field"><label for="h-dep">Deposit</label><div class="money pct"><input id="h-dep" type="text" inputmode="decimal" value="25"><span>%</span></div></div>
+      <div class="field"><label for="h-rate">Mortgage rate</label><div class="money pct"><input id="h-rate" type="text" inputmode="decimal" value="3.5"><span>% / yr</span></div></div>
+      <div class="field"><label for="h-term">Loan length</label><div class="money pct"><input id="h-term" type="text" inputmode="numeric" value="30"><span>yrs</span></div></div>
+      <div class="field"><label for="h-buy">Buying costs</label><div class="money pct"><input id="h-buy" type="text" inputmode="decimal" value="4"><span>%</span></div><span class="hint">Stamp duty, legal, agent. SG buyer's stamp duty alone is 3–6%.</span></div>
+      <div class="field"><label for="h-grow">Home price growth</label><div class="money pct"><input id="h-grow" type="text" inputmode="decimal" value="4"><span>% / yr</span></div><span class="hint">Long-run average in most developed markets is 3–5%.</span></div>
+      <div class="field"><label for="h-maint">Upkeep, tax, fees</label><div class="money pct"><input id="h-maint" type="text" inputmode="decimal" value="1"><span>% / yr</span></div><span class="hint">Maintenance, property tax, condo or MCST fees, insurance.</span></div>
+      <div class="field"><label for="h-sell">Selling costs</label><div class="money pct"><input id="h-sell" type="text" inputmode="decimal" value="2"><span>%</span></div></div>
+      <div class="field"><label for="h-rent">Rent for a similar place</label><div class="money"><span>$</span><input id="h-rent" type="text" inputmode="numeric" value="2,800"><span>/ mo</span></div></div>
+      <div class="field"><label for="h-rentg">Rent increases</label><div class="money pct"><input id="h-rentg" type="text" inputmode="decimal" value="2.5"><span>% / yr</span></div></div>
+    </div>
+    <div class="verdict">
+      <div class="side" id="side-buy"><span class="t">You buy the home</span><span class="v" id="buy-v">$0</span><span class="d" id="buy-d"></span></div>
+      <div class="side" id="side-rent"><span class="t">You rent and invest</span><span class="v" id="rent-v">$0</span><span class="d" id="rent-d"></span></div>
+    </div>
+    <p class="callout" id="verdict-text"></p>
+    <div class="chartbox">
+      <svg class="chart" id="hchart" viewBox="0 0 440 240" role="img" aria-label="Home equity versus invested portfolio over time"></svg>
+      <div class="legend"><span><i></i>Rent and invest in <span id="hfund"></span></span><span><i class="l2"></i>Home equity after selling costs</span></div>
+    </div>
+    <p class="fine">Home equity = what the home is worth, minus what you still owe the bank, minus selling costs, plus anything the owner invested on months when owning was cheaper than renting. The investing side starts with your deposit and buying costs in the fund, then adds the monthly gap whenever renting is cheaper. Mortgage interest, upkeep and rent are money gone either way. This ignores CPF, tax perks, and the fact that a home is also a place to live. A 25% deposit means a 10% price fall is a 40% hit to your money, and a 10% rise is a 40% gain. Leverage is the whole game with property.</p>
+  </section>
+
+  <footer class="foot">
+    <p class="fine"><b>Disclaimer.</b> This calculator is for general education only and is not financial advice, a recommendation to buy any product, or a forecast. It does not take your personal circumstances, goals or risk tolerance into account. Speak to a licensed financial adviser before investing, and only invest money you can afford to leave alone. Fund names and tickers are examples, not endorsements.</p>
+    <p class="fine"><b>How the numbers work.</b> These numbers use each index's long-run average annual return with dividends reinvested, compounded monthly, before fees, tax and inflation. Real markets don't go up in a straight line; expect years that are down 20–30% on the way. Past returns don't guarantee future ones, and this is education, not personal financial advice. Tickers are examples of index ETFs; Singapore and Hong Kong investors often prefer the Irish-domiciled versions (CSPX, VWRA, IWDA, CNDX) for tax reasons.</p>
+    <p class="fine">Return sources: S&amp;P 500 ≈ 10.6%/yr since 1993 (SPY, dividends reinvested); Nasdaq-100 16.0%/yr vs S&amp;P 500 11.0%/yr, Dec 2007–Dec 2025 (Nasdaq); MSCI World ≈ 12.3%/yr since 2012 (URTH), long-run closer to 8–9%; all-world and emerging-market figures are long-run index averages. Property ≈ 4.5%/yr is a long-run nominal price-growth average for developed markets (US Case-Shiller since 1987 and Singapore's URA private residential index since 1990 both land near 4%); it ignores rental income, leverage and transaction costs, which can swing the real outcome a lot either way.</p>
+  </footer>
+</div>
+
+<script>
+const FUNDS=[
+ {id:'sp500',name:'S&P 500',tick:'VOO · SPY · CSPX',rate:0.105,what:'The 500 biggest companies in the US. The one everyone means when they say "just buy the index".',beat:'90% of pros lost to it over 15 yrs',vibe:'Classic. Where most people start.'},
+ {id:'total',name:'Total US Market',tick:'VTI · ITOT',rate:0.10,what:'Basically the S&P 500 plus thousands of smaller US companies. Slightly broader, nearly identical ride.',beat:'~85% of US funds lost over 10 yrs',vibe:'Same energy, more companies.'},
+ {id:'world',name:'MSCI World',tick:'IWDA · URTH',rate:0.09,what:'About 1,400 companies across 23 rich countries. Roughly 70% US, the rest Japan, UK, Europe, Canada.',beat:'76% of global funds lost in 2025',vibe:'Global. Sleeps well at night.'},
+ {id:'allworld',name:'All-World',tick:'VWRA · VT · ACWI',rate:0.085,what:'Everything in MSCI World plus emerging markets like India, Taiwan and Brazil. The whole planet in one fund.',beat:'Beats most global managers over 15 yrs',vibe:'Maximum diversification.'},
+ {id:'ndx',name:'Nasdaq-100',tick:'QQQ · CNDX',rate:0.16,what:'100 biggest non-financial companies on the Nasdaq: Apple, Nvidia, Microsoft, Amazon. Tech-heavy, big swings.',beat:'Doubled the S&P 500 since 2007',vibe:'Spicy. Bigger drops, bigger highs.'},
+ {id:'em',name:'Emerging Markets',tick:'VWO · EIMI',rate:0.07,what:'Fast-growing economies: China, India, Taiwan, Korea, Brazil. Cheap right now, bumpy historically.',beat:'53% of EM funds lost in 2025',vibe:'Long game. Patience required.'}
+];
+const CASH=0.02;
+let sel='sp500';
+const $=id=>document.getElementById(id);
+const fmt=n=>'$'+Math.round(n).toLocaleString('en-US');
+const parse=s=>Math.max(0,Number(String(s).replace(/[^0-9.]/g,''))||0);
+
+function fv(lump,monthly,years,rate){
+  const rm=Math.pow(1+rate,1/12)-1, N=years*12;
+  const g=Math.pow(1+rm,N);
+  return lump*g + (rm===0? monthly*N : monthly*(g-1)/rm);
+}
+function series(lump,monthly,years,rate){
+  const out=[];for(let y=0;y<=years;y++)out.push(fv(lump,monthly,y,rate));return out;
+}
+
+function drawChart(inv,cash,years){
+  const W=440,H=240,L=52,R=14,T=14,B=30;
+  const max=Math.max(...inv,...cash,1);
+  const x=i=>L+(i/years)*(W-L-R);
+  const y=v=>T+(1-v/max)*(H-T-B);
+  const path=a=>a.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+  const ticks=4;let s='';
+  for(let k=0;k<=ticks;k++){const v=max*k/ticks;const yy=y(v).toFixed(1);
+    s+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}"/><text x="${L-6}" y="${(+yy+4)}" text-anchor="end">${v>=1e6?(v/1e6).toFixed(1)+'M':v>=1000?Math.round(v/1000)+'k':Math.round(v)}</text>`;}
+  const step=years<=10?1:years<=20?2:5;
+  for(let i=0;i<=years;i+=step){s+=`<text x="${x(i).toFixed(1)}" y="${H-10}" text-anchor="middle">${i===0?'now':i+'y'}</text>`;}
+  s+=`<path class="area" d="${path(inv)} L${x(years).toFixed(1)} ${y(0).toFixed(1)} L${L} ${y(0).toFixed(1)} Z"/>`;
+  s+=`<path class="cash" d="${path(cash)}"/><path class="line" d="${path(inv)}"/>`;
+  s+=`<circle class="dot" r="6" cx="${x(years).toFixed(1)}" cy="${y(inv[years]).toFixed(1)}"/>`;
+  $('chart').innerHTML=s;
+}
+
+var update=function(){
+  const lump=parse($('lump').value), monthly=parse($('monthly').value), years=+$('years').value;
+  $('years-val').textContent=years+(years===1?' yr':' yrs');
+  const f=FUNDS.find(f=>f.id===sel);
+  const total=fv(lump,monthly,years,f.rate), put=lump+monthly*12*years, cash=fv(lump,monthly,years,CASH);
+  $('fund-label').innerHTML=f.name+' · '+f.tick;
+  $('fv').textContent=fmt(total);
+  $('contrib').textContent=fmt(put); $('growth').textContent=fmt(Math.max(0,total-put));
+  $('c-contrib').textContent=fmt(put); $('c-growth').textContent=fmt(Math.max(0,total-put)); $('c-cash').textContent=fmt(cash);
+  drawChart(series(lump,monthly,years,f.rate),series(lump,monthly,years,CASH),years);
+  // table
+  const rows=FUNDS.map(g=>({g,v:fv(lump,monthly,years,g.rate)})).sort((a,b)=>b.v-a.v);
+  const mx=rows[0].v||1;
+  $('cmp').tBodies[0].innerHTML=rows.map(({g,v})=>`<tr class="${g.id===sel?'sel':''}"><td><b>${g.name}</b><br><span style="font-size:.8rem;color:var(--muted)">${g.tick}</span></td><td>${(g.rate*100).toFixed(1)}%/yr</td><td class="n">${fmt(v)}</td><td><div class="bar ${g.id===sel?'hot':''}" style="width:${(v/mx*100).toFixed(1)}%"></div></td></tr>`).join('');
+  document.querySelectorAll('.fund').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===sel));
+}
+
+$('funds').innerHTML=FUNDS.map(f=>`<button class="fund" type="button" data-id="${f.id}" aria-pressed="false">
+  <div class="top"><h3>${f.name}</h3><span class="tick">${f.tick}</span></div>
+  <div class="rate">${(f.rate*100).toFixed(1)}%<small>avg per year</small></div>
+  <p class="what">${f.what}</p>
+  <span class="beat">${f.beat}</span>
+  <span class="vibe">Vibe: <b>${f.vibe}</b></span>
+</button>`).join('');
+$('funds').addEventListener('click',e=>{const b=e.target.closest('.fund');if(!b)return;sel=b.dataset.id;update();window.scrollTo({top:0,behavior:'smooth'});});
+['lump','monthly'].forEach(id=>{$(id).addEventListener('input',()=>update());$(id).addEventListener('blur',()=>{$(id).value=parse($(id).value).toLocaleString('en-US');});});
+$('years').addEventListener('input',()=>update());
+update();
+
+/* ---- home vs invest ---- */
+const H=id=>parse($(id).value);
+function homeSim(years,fundRate){
+  const price=H('h-price'),dep=H('h-dep')/100,mr=H('h-rate')/100/12,term=Math.max(1,H('h-term'))*12,
+        buy=H('h-buy')/100,g=H('h-grow')/100,maint=H('h-maint')/100,sell=H('h-sell')/100,rent0=H('h-rent'),rg=H('h-rentg')/100;
+  const fm=Math.pow(1+fundRate,1/12)-1;
+  let bal=price*(1-dep);
+  const pay=mr===0?bal/term:bal*mr/(1-Math.pow(1+mr,-term));
+  let potA=0, potB=price*dep+price*buy;
+  const eq=[],inv=[];
+  let interestPaid=0,rentPaid=0;
+  for(let t=0;t<=years*12;t++){
+    const V=price*Math.pow(1+g,t/12);
+    if(t%12===0){eq.push(V*(1-sell)-bal+potA);inv.push(potB);}
+    if(t===years*12)break;
+    const rent=rent0*Math.pow(1+rg,Math.floor(t/12));
+    const own=(t<term?pay:0)+V*maint/12;
+    const interest=t<term?bal*mr:0;
+    if(t<term){bal-=(pay-interest);} if(bal<0)bal=0;
+    interestPaid+=interest; rentPaid+=rent;
+    potA*=1+fm; potB*=1+fm;
+    const diff=own-rent;
+    if(diff>0)potB+=diff; else potA+=-diff;
+  }
+  return {eq,inv,pay,interestPaid,rentPaid,dep:price*dep,buy:price*buy,g};
+}
+function breakeven(years,fundRate){
+  const el=$('h-grow'),orig=el.value;let lo=0,hi=0.25;
+  for(let i=0;i<30;i++){const mid=(lo+hi)/2;el.value=(mid*100).toFixed(3);const r=homeSim(years,fundRate);
+    (r.eq[years]>r.inv[years])?hi=mid:lo=mid;}
+  el.value=orig;return (lo+hi)/2;
+}
+function drawHChart(inv,eq,years){
+  const W=440,H2=240,L=52,R=14,T=14,B=30;
+  const all=[...inv,...eq];const max=Math.max(...all,1),min=Math.min(0,...all);
+  const x=i=>L+(i/years)*(W-L-R), y=v=>T+(1-(v-min)/(max-min))*(H2-T-B);
+  const path=a=>a.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+  let s2='';for(let k=0;k<=4;k++){const v=min+(max-min)*k/4;const yy=y(v).toFixed(1);
+    s2+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}"/><text x="${L-6}" y="${(+yy+4)}" text-anchor="end">${Math.abs(v)>=1e6?(v/1e6).toFixed(1)+'M':Math.abs(v)>=1000?Math.round(v/1000)+'k':Math.round(v)}</text>`;}
+  const step=years<=10?1:years<=20?2:5;
+  for(let i=0;i<=years;i+=step)s2+=`<text x="${x(i).toFixed(1)}" y="${H2-10}" text-anchor="middle">${i===0?'now':i+'y'}</text>`;
+  s2+=`<path class="line2" d="${path(eq)}"/><path class="line" d="${path(inv)}"/>`;
+  $('hchart').innerHTML=s2;
+}
+function updateHome(){
+  const years=+$('years').value, f=FUNDS.find(f=>f.id===sel);
+  const r=homeSim(years,f.rate);
+  const b=r.eq[years],v=r.inv[years];
+  $('buy-v').textContent=fmt(b); $('rent-v').textContent=fmt(v);
+  $('buy-d').textContent=`Mortgage ${fmt(r.pay)}/mo. Interest paid over ${years} yrs: ${fmt(r.interestPaid)}.`;
+  $('rent-d').textContent=`${fmt(r.dep+r.buy)} invested in ${f.name} on day one. Rent paid over ${years} yrs: ${fmt(r.rentPaid)}.`;
+  $('hfund').textContent=f.name;
+  $('side-buy').classList.toggle('win',b>v); $('side-rent').classList.toggle('win',v>=b);
+  const be=breakeven(years,f.rate);
+  const gap=Math.abs(b-v);
+  $('verdict-text').textContent = v>=b
+    ? `Renting and investing comes out ${fmt(gap)} ahead. Buying only wins here if home prices grow faster than ${(be*100).toFixed(1)}% a year, every year, for ${years} years.`
+    : `Buying comes out ${fmt(gap)} ahead on these numbers. It would flip to renting if home prices grew slower than ${(be*100).toFixed(1)}% a year.`;
+  drawHChart(r.inv,r.eq,years);
+}
+document.querySelectorAll('.home input').forEach(el=>{el.addEventListener('input',updateHome);el.addEventListener('blur',()=>{if(el.id==='h-price'||el.id==='h-rent')el.value=parse(el.value).toLocaleString('en-US');});});
+const _update=update; update=function(){_update();updateHome();}; update();
+</script>
