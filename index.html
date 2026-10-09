@@ -157,6 +157,13 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
 .chart .line2{fill:none;stroke:var(--muted);stroke-width:3;stroke-linecap:round}
 .legend i.l2{background:var(--muted)}
 
+.how{max-width:72ch}
+.how summary{cursor:pointer;color:var(--accent);font-weight:700;font-size:.9rem;text-decoration:underline;text-underline-offset:3px;list-style:none;display:inline}
+.how summary::-webkit-details-marker{display:none}
+.how summary::after{content:" +";text-decoration:none}
+.how[open] summary::after{content:" \2212"}
+.how summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+.how p{margin-top:10px;font-size:.9rem;color:var(--muted);background:var(--card);border-radius:14px;padding:14px 16px}
 @media (prefers-reduced-motion:reduce){.fund,.mixbar i{transition:none}}
 </style>
 
@@ -209,6 +216,10 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
       <p class="eyebrow">Build your portfolio</p>
       <h2>The index funds that beat the pros</h2>
       <p class="lede">Every year S&amp;P runs a scorecard called SPIVA that checks how many professional fund managers beat a plain index. These are the indexes most of them lose to over 15 years. Put 100% in one, or split it across a few. The return shown is the long-run average, not a promise.</p>
+      <details class="how">
+        <summary>How we picked these funds</summary>
+        <p>We started from the categories in S&amp;P's SPIVA scorecards, which compare active fund managers against a plain index, and kept the ones where most managers lose to the index over 10 to 15 years. We then kept one fund for each part of the market, so nothing is listed twice: the biggest US companies (S&amp;P 500), all US companies (Total Market), developed countries (MSCI World), every country (All-World), developing countries (Emerging Markets), smaller companies (Small-Cap), property (REITs) and bonds (Global Bonds). Nasdaq-100 is the exception: it isn't a SPIVA benchmark and is concentrated in tech, but it's included because it's the one people ask about most. Every one is available as a cheap mainstream ETF, including an Irish-domiciled version, which investors outside the US usually prefer because it cuts US tax on dividends and sidesteps US estate tax. The tickers shown are the largest funds tracking each index, not recommendations; any fund tracking the same index will do.</p>
+      </details>
     </div>
     <div class="mix" aria-label="Your Portfolio">
       <div class="row" id="presets">
@@ -283,8 +294,7 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
 
   <footer class="foot">
     <p class="fine"><b>Disclaimer.</b> This calculator is for general education only and is not financial advice, a recommendation to buy any product, or a forecast. It does not take your personal circumstances, goals or risk tolerance into account. Speak to a licensed financial adviser before investing, and only invest money you can afford to leave alone.</p>
-    <p class="fine"><b>How we picked the funds.</b> We started from the categories in S&amp;P's SPIVA scorecards, which compare active fund managers against a plain index, and kept the ones where most managers lose to the index over 10 to 15 years. We then kept one fund for each part of the market, so nothing is listed twice: the biggest US companies (S&amp;P 500), all US companies (Total Market), developed countries (MSCI World), every country (All-World), developing countries (Emerging Markets), smaller companies (Small-Cap), property (REITs) and bonds (Global Bonds). Nasdaq-100 is the exception: it isn't a SPIVA benchmark and is concentrated in tech, but it's included because it's the one people ask about most. Every one is available as a cheap mainstream ETF, including an Irish-domiciled version, which investors outside the US usually prefer because it cuts US tax on dividends and sidesteps US estate tax. The tickers shown are the largest funds tracking each index, not recommendations; any fund tracking the same index will do.</p>
-    <p class="fine"><b>How the numbers work.</b> These numbers use each index's long-run average annual return with dividends reinvested, compounded monthly, before fees, tax and inflation. Real markets don't go up in a straight line; expect years that are down 20–30% on the way. Past returns don't guarantee future ones, and this is education, not personal financial advice. Tickers are examples of index ETFs; Singapore and Hong Kong investors often prefer the Irish-domiciled versions (CSPX, VWRA, IWDA, CNDX) for tax reasons.</p>
+    <p class="fine"><b>How the numbers work.</b> These numbers use each index's long-run average annual return with dividends reinvested, compounded monthly, before fees, tax and inflation. Real markets don't go up in a straight line; expect years that are down 20–30% on the way. Past returns don't guarantee future ones, and this is education, not personal financial advice. Tickers are examples of index ETFs; Investors outside the US often prefer the Irish-domiciled versions (CSPX, VWRA, IWDA, CNDX) for tax reasons.</p>
     <p class="fine"><b>Sources.</b> S&amp;P 500 ≈ 10.6%/yr since 1993 (SPY, dividends reinvested); Nasdaq-100 16.0%/yr vs S&amp;P 500 11.0%/yr, Dec 2007–Dec 2025 (Nasdaq); MSCI World ≈ 12.3%/yr since 2012 (URTH), long-run closer to 8–9%; all-world and emerging-market figures are long-run index averages; global bonds ≈ 3.5%/yr is a long-run aggregate-bond average; small-cap ≈ 11%/yr and REITs ≈ 8.5%/yr are long-run US index averages with dividends reinvested. Bumpiness uses each index's typical annual volatility (S&amp;P 500 ~18%, Nasdaq-100 ~23%, World ~16%, EM ~21%, small-cap ~21%, REITs ~19%, bonds ~5%) and treats the stock funds as moving together. Property ≈ 4.5%/yr is a long-run nominal price-growth average for developed markets (US Case-Shiller since 1987 and Singapore's URA private residential index since 1990 both land near 4%); it ignores rental income, leverage and transaction costs, which can swing the real outcome a lot either way.</p>
   </footer>
 </div>
