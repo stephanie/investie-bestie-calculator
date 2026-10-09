@@ -16,7 +16,7 @@
   --butter:#FFD166;
   --mint:#F8C8DC;
   /* one colour per fund, for the mix bar */
-  --f1:#14603C; --f2:#5FA37A; --f3:#E0A526; --f4:#D9766B; --f5:#7A5CC7; --f6:#3F8FB5; --f7:#9A8F7F;
+  --f1:#14603C; --f2:#5FA37A; --f3:#E0A526; --f4:#D9766B; --f5:#7A5CC7; --f6:#3F8FB5; --f7:#C2558A; --f8:#B07A3C; --f9:#9A8F7F;
   --display:"Fraunces",Georgia,serif;
   --body:"Hanken Grotesk","Helvetica Neue",Arial,sans-serif;
 }
@@ -24,14 +24,14 @@
   :root:not([data-theme="light"]){
     --bg:#161411; --card:#242019; --ink:#F5EFE6; --muted:#B5ACA0; --line:#3B352C; --chart-grid:#3B352C;
     --accent:#5FD39A; --accent-ink:#161411; --lilac:#1F3A2C; --butter:#5A4414; --mint:#4A2838;
-    --f1:#5FD39A; --f2:#9ED5B3; --f3:#F2C14E; --f4:#F09A8E; --f5:#B39CF0; --f6:#7FC1E3; --f7:#B8AC9A;
+    --f1:#5FD39A; --f2:#9ED5B3; --f3:#F2C14E; --f4:#F09A8E; --f5:#B39CF0; --f6:#7FC1E3; --f7:#E88BB8; --f8:#D9A66A; --f9:#B8AC9A;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#161411; --card:#242019; --ink:#F5EFE6; --muted:#B5ACA0; --line:#3B352C; --chart-grid:#3B352C;
   --accent:#5FD39A; --accent-ink:#161411; --lilac:#1F3A2C; --butter:#5A4414; --mint:#4A2838;
-  --f1:#5FD39A; --f2:#9ED5B3; --f3:#F2C14E; --f4:#F09A8E; --f5:#B39CF0; --f6:#7FC1E3; --f7:#B8AC9A;
+  --f1:#5FD39A; --f2:#9ED5B3; --f3:#F2C14E; --f4:#F09A8E; --f5:#B39CF0; --f6:#7FC1E3; --f7:#E88BB8; --f8:#D9A66A; --f9:#B8AC9A;
   color-scheme:dark;
 }
 
@@ -97,7 +97,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .mixstats{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .mixstats .total{font-weight:700}
 .mixstats .total.bad{color:var(--f4)}
-.funds{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.funds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.funds{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.funds{grid-template-columns:1fr}}
 .fund{text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:18px;padding:18px;display:grid;gap:10px;color:inherit;position:relative;transition:border-color .15s}
 .fund.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
 .fund .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -281,8 +283,9 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
 
   <footer class="foot">
     <p class="fine"><b>Disclaimer.</b> This calculator is for general education only and is not financial advice, a recommendation to buy any product, or a forecast. It does not take your personal circumstances, goals or risk tolerance into account. Speak to a licensed financial adviser before investing, and only invest money you can afford to leave alone. Fund names and tickers are examples, not endorsements.</p>
+    <p class="fine"><b>Looking for a dividend fund?</b> You don't need one to earn dividends: every fund here pays them, and the calculator reinvests them. Dividend-focused funds (VYM, SCHD) pay more out and grow less, and for Singapore and Hong Kong investors they lose more to US withholding tax. Pick them for income you plan to spend, not for growth.</p>
     <p class="fine"><b>How the numbers work.</b> These numbers use each index's long-run average annual return with dividends reinvested, compounded monthly, before fees, tax and inflation. Real markets don't go up in a straight line; expect years that are down 20–30% on the way. Past returns don't guarantee future ones, and this is education, not personal financial advice. Tickers are examples of index ETFs; Singapore and Hong Kong investors often prefer the Irish-domiciled versions (CSPX, VWRA, IWDA, CNDX) for tax reasons.</p>
-    <p class="fine">Return sources: S&amp;P 500 ≈ 10.6%/yr since 1993 (SPY, dividends reinvested); Nasdaq-100 16.0%/yr vs S&amp;P 500 11.0%/yr, Dec 2007–Dec 2025 (Nasdaq); MSCI World ≈ 12.3%/yr since 2012 (URTH), long-run closer to 8–9%; all-world and emerging-market figures are long-run index averages; global bonds ≈ 3.5%/yr is a long-run aggregate-bond average. Bumpiness uses each index's typical annual volatility (S&amp;P 500 ~18%, Nasdaq-100 ~23%, World ~16%, EM ~21%, bonds ~5%) and treats the stock funds as moving together. Property ≈ 4.5%/yr is a long-run nominal price-growth average for developed markets (US Case-Shiller since 1987 and Singapore's URA private residential index since 1990 both land near 4%); it ignores rental income, leverage and transaction costs, which can swing the real outcome a lot either way.</p>
+    <p class="fine">Return sources: S&amp;P 500 ≈ 10.6%/yr since 1993 (SPY, dividends reinvested); Nasdaq-100 16.0%/yr vs S&amp;P 500 11.0%/yr, Dec 2007–Dec 2025 (Nasdaq); MSCI World ≈ 12.3%/yr since 2012 (URTH), long-run closer to 8–9%; all-world and emerging-market figures are long-run index averages; global bonds ≈ 3.5%/yr is a long-run aggregate-bond average; small-cap ≈ 11%/yr and REITs ≈ 8.5%/yr are long-run US index averages with dividends reinvested. Bumpiness uses each index's typical annual volatility (S&amp;P 500 ~18%, Nasdaq-100 ~23%, World ~16%, EM ~21%, small-cap ~21%, REITs ~19%, bonds ~5%) and treats the stock funds as moving together. Property ≈ 4.5%/yr is a long-run nominal price-growth average for developed markets (US Case-Shiller since 1987 and Singapore's URA private residential index since 1990 both land near 4%); it ignores rental income, leverage and transaction costs, which can swing the real outcome a lot either way.</p>
   </footer>
 </div>
 
@@ -294,6 +297,8 @@ const FUNDS=[
  {id:'allworld',name:'All-World',tick:'VWRA · VT · ACWI',rate:0.085,vol:0.16,kind:'eq',what:'Everything in MSCI World plus emerging markets like India, Taiwan and Brazil. The whole planet in one fund.',beat:'Beats most global managers over 15 yrs',vibe:'Maximum diversification.'},
  {id:'ndx',name:'Nasdaq-100',tick:'QQQ · CNDX',rate:0.16,vol:0.23,kind:'eq',what:'100 biggest non-financial companies on the Nasdaq: Apple, Nvidia, Microsoft, Amazon. Tech-heavy, big swings.',beat:'Doubled the S&P 500 since 2007',vibe:'Spicy. Bigger drops, bigger highs.'},
  {id:'em',name:'Emerging Markets',tick:'VWO · EIMI',rate:0.07,vol:0.21,kind:'eq',what:'Fast-growing economies: China, India, Taiwan, Korea, Brazil. Cheap right now, bumpy historically.',beat:'53% of EM funds lost in 2025',vibe:'Long game. Patience required.'},
+ {id:'small',name:'Small-Cap',tick:'VB · WSML · IUSN',rate:0.11,vol:0.21,kind:'eq',what:'Thousands of smaller companies instead of the giants. Historically a bit more return for a bumpier ride, though they've lagged the big names since 2015.',beat:'~85% of small-cap pros lost over 15 yrs',vibe:'Underdogs. Different ride to Apple and Nvidia.'},
+ {id:'reit',name:'Real Estate (REITs)',tick:'VNQ · IWDP · REET',rate:0.085,vol:0.19,kind:'eq',what:'Own a slice of malls, warehouses, data centres and offices. Property exposure with no mortgage, no stamp duty and no tenants.',beat:'~80% of real estate pros lost over 15 yrs',vibe:'Property, minus the property.'},
  {id:'bonds',name:'Global Bonds',tick:'AGGU · BND · VAGU',rate:0.035,vol:0.05,kind:'bond',what:'Loans to governments and big companies. Low return, small wobbles. The thing you add to sleep through a crash.',beat:'82% of bond fund managers lost in 2025',vibe:'The brakes. Not the engine.'}
 ];
 const PRESETS={

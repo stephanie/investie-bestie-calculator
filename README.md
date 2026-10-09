@@ -6,7 +6,7 @@ Open `index.html` in a browser. No build step, no dependencies beyond Google Fon
 
 ## What's in it
 
-- Six index funds (S&P 500, Total US Market, MSCI World, All-World, Nasdaq-100, Emerging Markets) with long-run average annual returns and the matching SPIVA stat on how many professionals lose to each.
+- Nine index funds (S&P 500, Total US Market, MSCI World, All-World, Nasdaq-100, Emerging Markets, Small-Cap, REITs, Global Bonds) with long-run average annual returns and the matching SPIVA stat on how many professionals lose to each.
 - A growth chart against a 2% savings account.
 - A side-by-side table of all funds for the same inputs.
 - "Buy a home or invest?": enter a home price, deposit, mortgage, costs and rent, and compare home equity against renting and investing the deposit in the chosen fund over the same horizon, with a breakeven price-growth figure.
@@ -23,6 +23,9 @@ Long-run nominal averages, dividends reinvested, compounded monthly, before fees
 | All-World | 8.5% |
 | Nasdaq-100 | 16.0% |
 | Emerging Markets | 7.0% |
+| Small-Cap | 11.0% |
+| Real Estate (REITs) | 8.5% |
+| Global Bonds | 3.5% |
 
 ## Sources
 
