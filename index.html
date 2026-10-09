@@ -15,6 +15,8 @@
   --lilac:#D7F0E0;
   --butter:#FFD166;
   --mint:#F8C8DC;
+  /* one colour per fund, for the mix bar */
+  --f1:#14603C; --f2:#5FA37A; --f3:#E0A526; --f4:#D9766B; --f5:#7A5CC7; --f6:#3F8FB5; --f7:#9A8F7F;
   --display:"Fraunces",Georgia,serif;
   --body:"Hanken Grotesk","Helvetica Neue",Arial,sans-serif;
 }
@@ -22,12 +24,14 @@
   :root:not([data-theme="light"]){
     --bg:#161411; --card:#242019; --ink:#F5EFE6; --muted:#B5ACA0; --line:#3B352C; --chart-grid:#3B352C;
     --accent:#5FD39A; --accent-ink:#161411; --lilac:#1F3A2C; --butter:#5A4414; --mint:#4A2838;
+    --f1:#5FD39A; --f2:#9ED5B3; --f3:#F2C14E; --f4:#F09A8E; --f5:#B39CF0; --f6:#7FC1E3; --f7:#B8AC9A;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#161411; --card:#242019; --ink:#F5EFE6; --muted:#B5ACA0; --line:#3B352C; --chart-grid:#3B352C;
   --accent:#5FD39A; --accent-ink:#161411; --lilac:#1F3A2C; --butter:#5A4414; --mint:#4A2838;
+  --f1:#5FD39A; --f2:#9ED5B3; --f3:#F2C14E; --f4:#F09A8E; --f5:#B39CF0; --f6:#7FC1E3; --f7:#B8AC9A;
   color-scheme:dark;
 }
 
@@ -80,13 +84,25 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .legend i{display:inline-block;width:18px;height:3px;border-radius:2px;background:var(--accent);vertical-align:middle;margin-right:6px}
 .legend i.c{background:repeating-linear-gradient(90deg,var(--muted) 0 4px,transparent 4px 8px)}
 
-/* fund picker */
+/* fund picker + mix */
+.mix{display:grid;gap:14px;background:var(--card);border-radius:22px;padding:18px 20px;margin-bottom:14px}
+.mix .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.preset{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:7px 12px;font:inherit;font-size:.85rem;font-weight:700;cursor:pointer}
+.preset:hover,.preset[aria-pressed="true"]{border-color:var(--accent);background:var(--lilac)}
+.preset:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.mixbar{display:flex;height:16px;border-radius:99px;overflow:hidden;background:var(--line)}
+.mixbar i{display:block;height:100%;transition:width .2s}
+.mixlegend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.82rem;font-weight:700;color:var(--muted)}
+.mixlegend b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.mixstats{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mixstats .total{font-weight:700}
+.mixstats .total.bad{color:var(--f4)}
 .funds{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-.fund{text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:18px;padding:18px;display:grid;gap:10px;cursor:pointer;font:inherit;color:inherit;transition:transform .15s,border-color .15s}
-.fund:hover{transform:translateY(-2px)}
-.fund:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-.fund[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.fund{text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:18px;padding:18px;display:grid;gap:10px;color:inherit;position:relative;transition:border-color .15s}
+.fund.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
 .fund .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.fund .top h3{display:flex;align-items:center;gap:8px}
+.fund .top h3 b{display:inline-block;width:12px;height:12px;border-radius:50%}
 .fund .tick{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.06em}
 .fund .rate{font-family:var(--display);font-weight:700;font-size:1.5rem;color:var(--accent)}
 .fund .rate small{font-family:var(--body);font-size:.7rem;color:var(--muted);font-weight:700;display:block;letter-spacing:.08em;text-transform:uppercase}
@@ -94,6 +110,15 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .fund .beat{font-size:.85rem;font-weight:700;background:var(--mint);color:var(--ink);border-radius:999px;padding:5px 10px;justify-self:start}
 .fund .vibe{font-size:.8rem;font-weight:700;color:var(--muted)}
 .fund .vibe b{color:var(--ink)}
+.fund .alloc{display:flex;gap:8px;align-items:center;margin-top:auto;padding-top:4px}
+.fund .alloc .money{flex:0 0 110px;padding:0 10px}
+.fund .alloc .money input{font-size:1.1rem;padding:8px 4px;text-align:right}
+.fund .alloc .all{border:0;background:transparent;color:var(--accent);font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;padding:6px 4px;text-decoration:underline;text-underline-offset:3px}
+.fund .alloc .all:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+.tips{display:grid;gap:10px;margin-top:18px;padding:18px 20px;border:1.5px solid var(--line);border-radius:22px}
+.tips h3{font-size:1.2rem}
+.tips ul{margin:0;padding-left:1.1em;display:grid;gap:6px;color:var(--muted);font-size:.95rem}
+.tips li b{color:var(--ink)}
 
 /* compare table */
 .table{overflow-x:auto;border-radius:18px;background:var(--card);padding:6px}
@@ -134,12 +159,12 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
 .chart .line2{fill:none;stroke:var(--muted);stroke-width:3;stroke-linecap:round}
 .legend i.l2{background:var(--muted)}
 
-@media (prefers-reduced-motion:reduce){.fund{transition:none}}
+@media (prefers-reduced-motion:reduce){.fund,.mixbar i{transition:none}}
 </style>
 
 <div class="wrap">
   <header class="hero">
-    <p class="eyebrow">Investie bestie calculator</p>
+    <p class="eyebrow">Women who invest</p>
     <h1>What could your money look like in <em>10 years</em>?</h1>
     <p class="lede">See how your money could grow if you pick some index funds today. No jargon, no stock picking, no boys' club. Just the boring funds that quietly beat the professionals.</p>
   </header>
@@ -176,18 +201,46 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
       </div>
       <div>
         <svg class="chart" id="chart" viewBox="0 0 440 240" role="img" aria-label="Growth over time"></svg>
-        <div class="legend"><span><i></i>Invested in the index fund</span><span><i class="c"></i>Left in a 2% savings account</span></div>
+        <div class="legend"><span><i></i>Invested in your mix</span><span><i class="c"></i>Left in a 2% savings account</span></div>
       </div>
     </div>
   </section>
 
   <section>
     <div class="hero" style="margin-bottom:16px">
-      <p class="eyebrow">Pick your fund</p>
+      <p class="eyebrow">Build your mix</p>
       <h2>The index funds that beat the pros</h2>
-      <p class="lede">Every year S&amp;P runs a scorecard called SPIVA that checks how many professional fund managers beat a plain index. These are the indexes most of them lose to over 15 years. The return shown is the long-run average, not a promise.</p>
+      <p class="lede">Every year S&amp;P runs a scorecard called SPIVA that checks how many professional fund managers beat a plain index. These are the indexes most of them lose to over 15 years. Put 100% in one, or split it across a few. The return shown is the long-run average, not a promise.</p>
+    </div>
+    <div class="mix" aria-label="Your mix">
+      <div class="row" id="presets">
+        <span class="eyebrow" style="margin-right:4px">Try a mix</span>
+        <button class="preset" type="button" data-preset="simple">Keep it simple</button>
+        <button class="preset" type="button" data-preset="classic">Classic</button>
+        <button class="preset" type="button" data-preset="balanced">Balanced</button>
+        <button class="preset" type="button" data-preset="spicy">Spicy</button>
+        <button class="preset" type="button" data-preset="even">Even split</button>
+      </div>
+      <div class="mixbar" id="mixbar" role="img" aria-label="How your money is split"></div>
+      <div class="mixlegend" id="mixlegend"></div>
+      <div class="mixstats">
+        <span class="total" id="mixtotal">100% allocated</span>
+        <span class="chip" id="mixrate">Blended return: 10.5%/yr</span>
+        <span class="chip butter" id="mixvol">Bumpiness: Bumpy</span>
+      </div>
+      <p class="fine" id="mixnote"></p>
     </div>
     <div class="funds" id="funds"></div>
+    <div class="tips">
+      <h3>Mixing 101</h3>
+      <ul>
+        <li><b>One fund is a real portfolio.</b> The S&amp;P 500 already holds 500 companies. All-World holds about 3,500 across 50 countries. More funds is not more sophisticated.</li>
+        <li><b>Watch the overlap.</b> S&amp;P 500 + Nasdaq-100 + Total US Market feels diversified but is mostly the same hundred companies three times over.</li>
+        <li><b>Spreading out doesn't raise the return.</b> It narrows the range of outcomes, so a bad year hurts less and you're less likely to panic-sell. That's the point.</li>
+        <li><b>Bonds are the brakes, not the engine.</b> They grow slowly and fall less. A common rule of thumb is to hold your age in bonds, or "100 minus your age" in stocks.</li>
+        <li><b>Rebalance once a year.</b> If one fund has run ahead, top up the others until the percentages look like your plan again.</li>
+      </ul>
+    </div>
   </section>
 
   <section>
@@ -214,7 +267,7 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
     <div class="hero">
       <p class="eyebrow">Buy a home or invest?</p>
       <h2>Home ownership may not actually lead to higher returns</h2>
-      <p class="lede">Put in a home you're eyeing. We compare two versions of you: one who buys it, and one who keeps renting and invests the deposit and buying costs in the fund you picked above. Whoever pays less each month invests the difference. Same time horizon as the slider up top.</p>
+      <p class="lede">Put in a home you're eyeing. We compare two versions of you: one who buys it, and one who keeps renting and invests the deposit and buying costs in the mix you built above. Whoever pays less each month invests the difference. Same time horizon as the slider up top.</p>
     </div>
     <div class="inputs">
       <div class="field"><label for="h-price">Home price</label><div class="money"><span>$</span><input id="h-price" type="text" inputmode="numeric" value="800,000"></div></div>
@@ -243,24 +296,33 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
   <footer class="foot">
     <p class="fine"><b>Disclaimer.</b> This calculator is for general education only and is not financial advice, a recommendation to buy any product, or a forecast. It does not take your personal circumstances, goals or risk tolerance into account. Speak to a licensed financial adviser before investing, and only invest money you can afford to leave alone. Fund names and tickers are examples, not endorsements.</p>
     <p class="fine"><b>How the numbers work.</b> These numbers use each index's long-run average annual return with dividends reinvested, compounded monthly, before fees, tax and inflation. Real markets don't go up in a straight line; expect years that are down 20–30% on the way. Past returns don't guarantee future ones, and this is education, not personal financial advice. Tickers are examples of index ETFs; Singapore and Hong Kong investors often prefer the Irish-domiciled versions (CSPX, VWRA, IWDA, CNDX) for tax reasons.</p>
-    <p class="fine">Return sources: S&amp;P 500 ≈ 10.6%/yr since 1993 (SPY, dividends reinvested); Nasdaq-100 16.0%/yr vs S&amp;P 500 11.0%/yr, Dec 2007–Dec 2025 (Nasdaq); MSCI World ≈ 12.3%/yr since 2012 (URTH), long-run closer to 8–9%; all-world and emerging-market figures are long-run index averages. Property ≈ 4.5%/yr is a long-run nominal price-growth average for developed markets (US Case-Shiller since 1987 and Singapore's URA private residential index since 1990 both land near 4%); it ignores rental income, leverage and transaction costs, which can swing the real outcome a lot either way.</p>
+    <p class="fine">Return sources: S&amp;P 500 ≈ 10.6%/yr since 1993 (SPY, dividends reinvested); Nasdaq-100 16.0%/yr vs S&amp;P 500 11.0%/yr, Dec 2007–Dec 2025 (Nasdaq); MSCI World ≈ 12.3%/yr since 2012 (URTH), long-run closer to 8–9%; all-world and emerging-market figures are long-run index averages; global bonds ≈ 3.5%/yr is a long-run aggregate-bond average. Bumpiness uses each index's typical annual volatility (S&amp;P 500 ~18%, Nasdaq-100 ~23%, World ~16%, EM ~21%, bonds ~5%) and treats the stock funds as moving together. Property ≈ 4.5%/yr is a long-run nominal price-growth average for developed markets (US Case-Shiller since 1987 and Singapore's URA private residential index since 1990 both land near 4%); it ignores rental income, leverage and transaction costs, which can swing the real outcome a lot either way.</p>
   </footer>
 </div>
 
 <script>
 const FUNDS=[
- {id:'sp500',name:'S&P 500',tick:'VOO · SPY · CSPX',rate:0.105,what:'The 500 biggest companies in the US. The one everyone means when they say "just buy the index".',beat:'90% of pros lost to it over 15 yrs',vibe:'Classic. Where most people start.'},
- {id:'total',name:'Total US Market',tick:'VTI · ITOT',rate:0.10,what:'Basically the S&P 500 plus thousands of smaller US companies. Slightly broader, nearly identical ride.',beat:'~85% of US funds lost over 10 yrs',vibe:'Same energy, more companies.'},
- {id:'world',name:'MSCI World',tick:'IWDA · URTH',rate:0.09,what:'About 1,400 companies across 23 rich countries. Roughly 70% US, the rest Japan, UK, Europe, Canada.',beat:'76% of global funds lost in 2025',vibe:'Global. Sleeps well at night.'},
- {id:'allworld',name:'All-World',tick:'VWRA · VT · ACWI',rate:0.085,what:'Everything in MSCI World plus emerging markets like India, Taiwan and Brazil. The whole planet in one fund.',beat:'Beats most global managers over 15 yrs',vibe:'Maximum diversification.'},
- {id:'ndx',name:'Nasdaq-100',tick:'QQQ · CNDX',rate:0.16,what:'100 biggest non-financial companies on the Nasdaq: Apple, Nvidia, Microsoft, Amazon. Tech-heavy, big swings.',beat:'Doubled the S&P 500 since 2007',vibe:'Spicy. Bigger drops, bigger highs.'},
- {id:'em',name:'Emerging Markets',tick:'VWO · EIMI',rate:0.07,what:'Fast-growing economies: China, India, Taiwan, Korea, Brazil. Cheap right now, bumpy historically.',beat:'53% of EM funds lost in 2025',vibe:'Long game. Patience required.'}
+ {id:'sp500',name:'S&P 500',tick:'VOO · SPY · CSPX',rate:0.105,vol:0.18,kind:'eq',what:'The 500 biggest companies in the US. The one everyone means when they say "just buy the index".',beat:'90% of pros lost to it over 15 yrs',vibe:'Classic. Where most people start.'},
+ {id:'total',name:'Total US Market',tick:'VTI · ITOT',rate:0.10,vol:0.18,kind:'eq',what:'Basically the S&P 500 plus thousands of smaller US companies. Slightly broader, nearly identical ride.',beat:'~85% of US funds lost over 10 yrs',vibe:'Same energy, more companies.'},
+ {id:'world',name:'MSCI World',tick:'IWDA · URTH',rate:0.09,vol:0.16,kind:'eq',what:'About 1,400 companies across 23 rich countries. Roughly 70% US, the rest Japan, UK, Europe, Canada.',beat:'76% of global funds lost in 2025',vibe:'Global. Sleeps well at night.'},
+ {id:'allworld',name:'All-World',tick:'VWRA · VT · ACWI',rate:0.085,vol:0.16,kind:'eq',what:'Everything in MSCI World plus emerging markets like India, Taiwan and Brazil. The whole planet in one fund.',beat:'Beats most global managers over 15 yrs',vibe:'Maximum diversification.'},
+ {id:'ndx',name:'Nasdaq-100',tick:'QQQ · CNDX',rate:0.16,vol:0.23,kind:'eq',what:'100 biggest non-financial companies on the Nasdaq: Apple, Nvidia, Microsoft, Amazon. Tech-heavy, big swings.',beat:'Doubled the S&P 500 since 2007',vibe:'Spicy. Bigger drops, bigger highs.'},
+ {id:'em',name:'Emerging Markets',tick:'VWO · EIMI',rate:0.07,vol:0.21,kind:'eq',what:'Fast-growing economies: China, India, Taiwan, Korea, Brazil. Cheap right now, bumpy historically.',beat:'53% of EM funds lost in 2025',vibe:'Long game. Patience required.'},
+ {id:'bonds',name:'Global Bonds',tick:'AGGU · BND · VAGU',rate:0.035,vol:0.05,kind:'bond',what:'Loans to governments and big companies. Low return, small wobbles. The thing you add to sleep through a crash.',beat:'82% of bond fund managers lost in 2025',vibe:'The brakes. Not the engine.'}
 ];
+const PRESETS={
+  simple:{allworld:100},
+  classic:{sp500:70,world:30},
+  balanced:{allworld:60,bonds:40},
+  spicy:{sp500:60,ndx:30,em:10},
+  even:Object.fromEntries(FUNDS.map(f=>[f.id,Math.round(1000/FUNDS.length)/10]))
+};
 const CASH=0.02;
-let sel='sp500';
+let W={sp500:100};
 const $=id=>document.getElementById(id);
 const fmt=n=>'$'+Math.round(n).toLocaleString('en-US');
 const parse=s=>Math.max(0,Number(String(s).replace(/[^0-9.]/g,''))||0);
+const colour=i=>`var(--f${i+1})`;
 
 function fv(lump,monthly,years,rate){
   const rm=Math.pow(1+rate,1/12)-1, N=years*12;
@@ -271,15 +333,44 @@ function series(lump,monthly,years,rate){
   const out=[];for(let y=0;y<=years;y++)out.push(fv(lump,monthly,y,rate));return out;
 }
 
+/* ---- mix maths ---- */
+function mix(){
+  const total=FUNDS.reduce((a,f)=>a+(W[f.id]||0),0);
+  const n=total>0?total:1;
+  const w=FUNDS.map(f=>(W[f.id]||0)/n);
+  const rate=FUNDS.reduce((a,f,i)=>a+w[i]*f.rate,0);
+  // equities move together; bonds mostly don't
+  const eqVol=FUNDS.reduce((a,f,i)=>a+(f.kind==='eq'?w[i]*f.vol:0),0);
+  const bdVol=FUNDS.reduce((a,f,i)=>a+(f.kind==='bond'?w[i]*f.vol:0),0);
+  const vol=Math.sqrt(eqVol*eqVol+bdVol*bdVol+2*0.1*eqVol*bdVol);
+  const on=FUNDS.filter(f=>(W[f.id]||0)>0);
+  const label=on.length===1?on[0].name+' · '+on[0].tick:on.length===0?'Nothing allocated yet':'Your mix · '+on.map(f=>Math.round(W[f.id])+'% '+f.name).join(', ');
+  const bump=vol<0.08?'Smooth':vol<0.14?'Steady':vol<0.19?'Bumpy':'Rollercoaster';
+  return {total,rate,vol,label,on,bump};
+}
+function renderMix(m){
+  $('mixbar').innerHTML=FUNDS.map((f,i)=>`<i style="width:${(W[f.id]||0)/Math.max(m.total,100)*100}%;background:${colour(i)}" title="${f.name} ${Math.round(W[f.id]||0)}%"></i>`).join('');
+  $('mixlegend').innerHTML=m.on.map(f=>`<span><b style="background:${colour(FUNDS.indexOf(f))}"></b>${Math.round(W[f.id])}% ${f.name}</span>`).join('');
+  const t=Math.round(m.total*10)/10;
+  const tot=$('mixtotal');
+  tot.textContent=t===100?'100% allocated':t<100?`${Math.round(100-t)}% still to place`:`${Math.round(t-100)}% over. We'll scale it to 100%.`;
+  tot.classList.toggle('bad',t!==100);
+  $('mixrate').textContent=`Blended return: ${(m.rate*100).toFixed(1)}%/yr`;
+  $('mixvol').textContent=`Bumpiness: ${m.bump}`;
+  $('mixnote').textContent=m.on.length?`In a bad year this mix has historically dropped around ${Math.round(m.vol*200)}%. Could you leave it alone and keep buying? That's the test.`:'Add a percentage to at least one fund.';
+  document.querySelectorAll('.preset').forEach(b=>{const p=PRESETS[b.dataset.preset];const same=FUNDS.every(f=>Math.abs((W[f.id]||0)-(p[f.id]||0))<0.01);b.setAttribute('aria-pressed',same);});
+  document.querySelectorAll('.fund').forEach(c=>{c.classList.toggle('on',(W[c.dataset.id]||0)>0);const inp=c.querySelector('input');if(document.activeElement!==inp)inp.value=W[c.dataset.id]?String(Math.round(W[c.dataset.id]*10)/10):'';});
+}
+
 function drawChart(inv,cash,years){
-  const W=440,H=240,L=52,R=14,T=14,B=30;
+  const Wd=440,H=240,L=52,R=14,T=14,B=30;
   const max=Math.max(...inv,...cash,1);
-  const x=i=>L+(i/years)*(W-L-R);
+  const x=i=>L+(i/years)*(Wd-L-R);
   const y=v=>T+(1-v/max)*(H-T-B);
   const path=a=>a.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
   const ticks=4;let s='';
   for(let k=0;k<=ticks;k++){const v=max*k/ticks;const yy=y(v).toFixed(1);
-    s+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}"/><text x="${L-6}" y="${(+yy+4)}" text-anchor="end">${v>=1e6?(v/1e6).toFixed(1)+'M':v>=1000?Math.round(v/1000)+'k':Math.round(v)}</text>`;}
+    s+=`<line class="grid" x1="${L}" x2="${Wd-R}" y1="${yy}" y2="${yy}"/><text x="${L-6}" y="${(+yy+4)}" text-anchor="end">${v>=1e6?(v/1e6).toFixed(1)+'M':v>=1000?Math.round(v/1000)+'k':Math.round(v)}</text>`;}
   const step=years<=10?1:years<=20?2:5;
   for(let i=0;i<=years;i+=step){s+=`<text x="${x(i).toFixed(1)}" y="${H-10}" text-anchor="middle">${i===0?'now':i+'y'}</text>`;}
   s+=`<path class="area" d="${path(inv)} L${x(years).toFixed(1)} ${y(0).toFixed(1)} L${L} ${y(0).toFixed(1)} Z"/>`;
@@ -288,34 +379,39 @@ function drawChart(inv,cash,years){
   $('chart').innerHTML=s;
 }
 
-var update=function(){
+function update(){
   const lump=parse($('lump').value), monthly=parse($('monthly').value), years=+$('years').value;
   $('years-val').textContent=years+(years===1?' yr':' yrs');
-  const f=FUNDS.find(f=>f.id===sel);
-  const total=fv(lump,monthly,years,f.rate), put=lump+monthly*12*years, cash=fv(lump,monthly,years,CASH);
-  $('fund-label').innerHTML=f.name+' · '+f.tick;
+  const m=mix(); renderMix(m);
+  const total=fv(lump,monthly,years,m.rate), put=lump+monthly*12*years, cash=fv(lump,monthly,years,CASH);
+  $('fund-label').textContent=m.label;
   $('fv').textContent=fmt(total);
   $('contrib').textContent=fmt(put); $('growth').textContent=fmt(Math.max(0,total-put));
   $('c-contrib').textContent=fmt(put); $('c-growth').textContent=fmt(Math.max(0,total-put)); $('c-cash').textContent=fmt(cash);
-  drawChart(series(lump,monthly,years,f.rate),series(lump,monthly,years,CASH),years);
-  // table
-  const rows=FUNDS.map(g=>({g,v:fv(lump,monthly,years,g.rate)})).sort((a,b)=>b.v-a.v);
+  drawChart(series(lump,monthly,years,m.rate),series(lump,monthly,years,CASH),years);
+  // table: your mix first, then every fund on its own
+  const rows=FUNDS.map(g=>({name:g.name,tick:g.tick,rate:g.rate,v:fv(lump,monthly,years,g.rate)}));
+  if(m.on.length>1)rows.push({name:'Your mix',tick:m.on.map(f=>Math.round(W[f.id])+'% '+f.name).join(' · '),rate:m.rate,v:total,sel:true});
+  else if(m.on.length===1)rows.find(r=>r.name===m.on[0].name).sel=true;
+  rows.sort((a,b)=>b.v-a.v);
   const mx=rows[0].v||1;
-  $('cmp').tBodies[0].innerHTML=rows.map(({g,v})=>`<tr class="${g.id===sel?'sel':''}"><td><b>${g.name}</b><br><span style="font-size:.8rem;color:var(--muted)">${g.tick}</span></td><td>${(g.rate*100).toFixed(1)}%/yr</td><td class="n">${fmt(v)}</td><td><div class="bar ${g.id===sel?'hot':''}" style="width:${(v/mx*100).toFixed(1)}%"></div></td></tr>`).join('');
-  document.querySelectorAll('.fund').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===sel));
+  $('cmp').tBodies[0].innerHTML=rows.map(r=>`<tr class="${r.sel?'sel':''}"><td><b>${r.name}</b><br><span style="font-size:.8rem;color:var(--muted)">${r.tick}</span></td><td>${(r.rate*100).toFixed(1)}%/yr</td><td class="n">${fmt(r.v)}</td><td><div class="bar ${r.sel?'hot':''}" style="width:${(r.v/mx*100).toFixed(1)}%"></div></td></tr>`).join('');
+  updateHome(m);
 }
 
-$('funds').innerHTML=FUNDS.map(f=>`<button class="fund" type="button" data-id="${f.id}" aria-pressed="false">
-  <div class="top"><h3>${f.name}</h3><span class="tick">${f.tick}</span></div>
+$('funds').innerHTML=FUNDS.map((f,i)=>`<div class="fund" data-id="${f.id}">
+  <div class="top"><h3><b style="background:${colour(i)}"></b>${f.name}</h3><span class="tick">${f.tick}</span></div>
   <div class="rate">${(f.rate*100).toFixed(1)}%<small>avg per year</small></div>
   <p class="what">${f.what}</p>
   <span class="beat">${f.beat}</span>
   <span class="vibe">Vibe: <b>${f.vibe}</b></span>
-</button>`).join('');
-$('funds').addEventListener('click',e=>{const b=e.target.closest('.fund');if(!b)return;sel=b.dataset.id;update();window.scrollTo({top:0,behavior:'smooth'});});
+  <div class="alloc"><label class="money pct" for="w-${f.id}"><input id="w-${f.id}" type="text" inputmode="decimal" value="" placeholder="0" aria-label="Percent in ${f.name}"><span>%</span></label><button class="all" type="button" data-all="${f.id}">Put it all here</button></div>
+</div>`).join('');
+$('funds').addEventListener('input',e=>{const inp=e.target.closest('input');if(!inp)return;const id=inp.id.slice(2);const v=parse(inp.value);if(v>0)W[id]=v;else delete W[id];update();});
+$('funds').addEventListener('click',e=>{const b=e.target.closest('.all');if(!b)return;W={[b.dataset.all]:100};update();});
+$('presets').addEventListener('click',e=>{const b=e.target.closest('.preset');if(!b)return;W=Object.assign({},PRESETS[b.dataset.preset]);update();});
 ['lump','monthly'].forEach(id=>{$(id).addEventListener('input',()=>update());$(id).addEventListener('blur',()=>{$(id).value=parse($(id).value).toLocaleString('en-US');});});
 $('years').addEventListener('input',()=>update());
-update();
 
 /* ---- home vs invest ---- */
 const H=id=>parse($(id).value);
@@ -350,33 +446,35 @@ function breakeven(years,fundRate){
   el.value=orig;return (lo+hi)/2;
 }
 function drawHChart(inv,eq,years){
-  const W=440,H2=240,L=52,R=14,T=14,B=30;
+  const Wd=440,H2=240,L=52,R=14,T=14,B=30;
   const all=[...inv,...eq];const max=Math.max(...all,1),min=Math.min(0,...all);
-  const x=i=>L+(i/years)*(W-L-R), y=v=>T+(1-(v-min)/(max-min))*(H2-T-B);
+  const x=i=>L+(i/years)*(Wd-L-R), y=v=>T+(1-(v-min)/(max-min))*(H2-T-B);
   const path=a=>a.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
   let s2='';for(let k=0;k<=4;k++){const v=min+(max-min)*k/4;const yy=y(v).toFixed(1);
-    s2+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}"/><text x="${L-6}" y="${(+yy+4)}" text-anchor="end">${Math.abs(v)>=1e6?(v/1e6).toFixed(1)+'M':Math.abs(v)>=1000?Math.round(v/1000)+'k':Math.round(v)}</text>`;}
+    s2+=`<line class="grid" x1="${L}" x2="${Wd-R}" y1="${yy}" y2="${yy}"/><text x="${L-6}" y="${(+yy+4)}" text-anchor="end">${Math.abs(v)>=1e6?(v/1e6).toFixed(1)+'M':Math.abs(v)>=1000?Math.round(v/1000)+'k':Math.round(v)}</text>`;}
   const step=years<=10?1:years<=20?2:5;
   for(let i=0;i<=years;i+=step)s2+=`<text x="${x(i).toFixed(1)}" y="${H2-10}" text-anchor="middle">${i===0?'now':i+'y'}</text>`;
   s2+=`<path class="line2" d="${path(eq)}"/><path class="line" d="${path(inv)}"/>`;
   $('hchart').innerHTML=s2;
 }
-function updateHome(){
-  const years=+$('years').value, f=FUNDS.find(f=>f.id===sel);
-  const r=homeSim(years,f.rate);
+function updateHome(m){
+  m=m||mix();
+  const years=+$('years').value;
+  const name=m.on.length===1?m.on[0].name:'your mix';
+  const r=homeSim(years,m.rate);
   const b=r.eq[years],v=r.inv[years];
   $('buy-v').textContent=fmt(b); $('rent-v').textContent=fmt(v);
   $('buy-d').textContent=`Mortgage ${fmt(r.pay)}/mo. Interest paid over ${years} yrs: ${fmt(r.interestPaid)}.`;
-  $('rent-d').textContent=`${fmt(r.dep+r.buy)} invested in ${f.name} on day one. Rent paid over ${years} yrs: ${fmt(r.rentPaid)}.`;
-  $('hfund').textContent=f.name;
+  $('rent-d').textContent=`${fmt(r.dep+r.buy)} invested in ${name} (${(m.rate*100).toFixed(1)}%/yr) on day one. Rent paid over ${years} yrs: ${fmt(r.rentPaid)}.`;
+  $('hfund').textContent=name;
   $('side-buy').classList.toggle('win',b>v); $('side-rent').classList.toggle('win',v>=b);
-  const be=breakeven(years,f.rate);
+  const be=breakeven(years,m.rate);
   const gap=Math.abs(b-v);
   $('verdict-text').textContent = v>=b
     ? `Renting and investing comes out ${fmt(gap)} ahead. Buying only wins here if home prices grow faster than ${(be*100).toFixed(1)}% a year, every year, for ${years} years.`
     : `Buying comes out ${fmt(gap)} ahead on these numbers. It would flip to renting if home prices grew slower than ${(be*100).toFixed(1)}% a year.`;
   drawHChart(r.inv,r.eq,years);
 }
-document.querySelectorAll('.home input').forEach(el=>{el.addEventListener('input',updateHome);el.addEventListener('blur',()=>{if(el.id==='h-price'||el.id==='h-rent')el.value=parse(el.value).toLocaleString('en-US');});});
-const _update=update; update=function(){_update();updateHome();}; update();
+document.querySelectorAll('.home input').forEach(el=>{el.addEventListener('input',()=>updateHome());el.addEventListener('blur',()=>{if(el.id==='h-price'||el.id==='h-rent')el.value=parse(el.value).toLocaleString('en-US');});});
+update();
 </script>
