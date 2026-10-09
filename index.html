@@ -216,8 +216,8 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
         <button class="preset" type="button" data-preset="simple">Keep it simple</button>
         <button class="preset" type="button" data-preset="classic">Classic</button>
         <button class="preset" type="button" data-preset="balanced">Balanced</button>
+        <button class="preset" type="button" data-preset="spread">Spread out</button>
         <button class="preset" type="button" data-preset="spicy">Spicy</button>
-        <button class="preset" type="button" data-preset="even">Even split</button>
       </div>
       <div class="mixbar" id="mixbar" role="img" aria-label="How your money is split"></div>
       <div class="mixlegend" id="mixlegend"></div>
@@ -306,7 +306,7 @@ const PRESETS={
   classic:{sp500:70,world:30},
   balanced:{allworld:60,bonds:40},
   spicy:{sp500:60,ndx:30,em:10},
-  even:Object.fromEntries(FUNDS.map(f=>[f.id,Math.round(1000/FUNDS.length)/10]))
+  spread:{allworld:40,small:20,reit:20,bonds:20}
 };
 const CASH=0.02;
 let W={sp500:100};
