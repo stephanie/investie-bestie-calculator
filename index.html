@@ -199,7 +199,7 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
       </div>
       <div>
         <svg class="chart" id="chart" viewBox="0 0 440 240" role="img" aria-label="Growth over time"></svg>
-        <div class="legend"><span><i></i>Invested in your selected portfolio</span><span><i class="c"></i>Left in a 2% savings account</span></div>
+        <div class="legend"><span><i></i>Invested in your portfolio</span><span><i class="c"></i>Left in a 2% savings account</span></div>
       </div>
     </div>
   </section>
@@ -210,7 +210,7 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
       <h2>The index funds that beat the pros</h2>
       <p class="lede">Every year S&amp;P runs a scorecard called SPIVA that checks how many professional fund managers beat a plain index. These are the indexes most of them lose to over 15 years. Put 100% in one, or split it across a few. The return shown is the long-run average, not a promise.</p>
     </div>
-    <div class="mix" aria-label="Your selected portfolio">
+    <div class="mix" aria-label="Your Portfolio">
       <div class="row" id="presets">
         <span class="eyebrow" style="margin-right:4px">Try a mix</span>
         <button class="preset" type="button" data-preset="simple">Keep it simple</button>
@@ -335,7 +335,7 @@ function mix(){
   const bdVol=FUNDS.reduce((a,f,i)=>a+(f.kind==='bond'?w[i]*f.vol:0),0);
   const vol=Math.sqrt(eqVol*eqVol+bdVol*bdVol+2*0.1*eqVol*bdVol);
   const on=FUNDS.filter(f=>(W[f.id]||0)>0);
-  const label=on.length===1?on[0].name+' · '+on[0].tick:on.length===0?'Nothing allocated yet':'Your selected portfolio · '+on.map(f=>Math.round(W[f.id])+'% '+f.name).join(', ');
+  const label=on.length===1?on[0].name+' · '+on[0].tick:on.length===0?'Nothing allocated yet':'Your Portfolio · '+on.map(f=>Math.round(W[f.id])+'% '+f.name).join(', ');
   const bump=vol<0.08?'Smooth':vol<0.14?'Steady':vol<0.19?'Bumpy':'Rollercoaster';
   return {total,rate,vol,label,on,bump};
 }
@@ -382,7 +382,7 @@ function update(){
   drawChart(series(lump,monthly,years,m.rate),series(lump,monthly,years,CASH),years);
   // table: your mix first, then every fund on its own
   const rows=FUNDS.map(g=>({name:g.name,tick:g.tick,rate:g.rate,v:fv(lump,monthly,years,g.rate)}));
-  if(m.on.length>1)rows.push({name:'Your selected portfolio',tick:m.on.map(f=>Math.round(W[f.id])+'% '+f.name).join(' · '),rate:m.rate,v:total,sel:true});
+  if(m.on.length>1)rows.push({name:'Your Portfolio',tick:m.on.map(f=>Math.round(W[f.id])+'% '+f.name).join(' · '),rate:m.rate,v:total,sel:true});
   else if(m.on.length===1)rows.find(r=>r.name===m.on[0].name).sel=true;
   rows.sort((a,b)=>b.v-a.v);
   const mx=rows[0].v||1;
@@ -451,7 +451,7 @@ function drawHChart(inv,eq,years){
 function updateHome(m){
   m=m||mix();
   const years=+$('years').value;
-  const name=m.on.length===1?m.on[0].name:'your selected portfolio';
+  const name=m.on.length===1?m.on[0].name:'your portfolio';
   const r=homeSim(years,m.rate);
   const b=r.eq[years],v=r.inv[years];
   $('buy-v').textContent=fmt(b); $('rent-v').textContent=fmt(v);
