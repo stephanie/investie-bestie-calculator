@@ -395,7 +395,7 @@ $('funds').innerHTML=FUNDS.map((f,i)=>`<div class="fund" data-id="${f.id}">
   <div class="rate">${(f.rate*100).toFixed(1)}%<small>avg per year</small></div>
   <p class="what">${f.what}</p>
   <span class="beat">${f.beat}</span>
-  <span class="vibe">Vibe: <b>${f.vibe}</b></span>
+  <span class="vibe">TL;DR: <b>${f.vibe}</b></span>
   <div class="alloc"><label class="money pct" for="w-${f.id}"><input id="w-${f.id}" type="text" inputmode="decimal" value="" placeholder="0" aria-label="Percent in ${f.name}"><span>%</span></label><button class="all" type="button" data-all="${f.id}">Put it all here</button></div>
 </div>`).join('');
 $('funds').addEventListener('input',e=>{const inp=e.target.closest('input');if(!inp)return;const id=inp.id.slice(2);const v=parse(inp.value);if(v>0)W[id]=v;else delete W[id];update();});
