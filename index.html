@@ -31,7 +31,7 @@
   --butter:#FFD166;
   --mint:#EBB5C5;
   /* one colour per fund, for the mix bar */
-  --f1:#14603C; --f2:#5FA37A; --f3:#E0A526; --f4:#D9766B; --f5:#7A5CC7; --f6:#3F8FB5; --f7:#C2558A; --f8:#B07A3C; --f9:#9A8F7F;
+  --f1:#14603C; --f2:#E6A3B7; --f3:#71C467; --f4:#C2558A; --f5:#7A5CC7; --f6:#D9768F; --f7:#9E2F5E; --f8:#E0A526; --f9:#9A8F7F;
   --display:"Fraunces",Georgia,serif;
   --body:"Hanken Grotesk","Helvetica Neue",Arial,sans-serif;
 }
@@ -39,14 +39,14 @@
   :root:not([data-theme="light"]){
     --bg:#161411; --card:#242019; --ink:#F5EFE6; --muted:#B5ACA0; --line:#3B352C; --chart-grid:#3B352C;
     --accent:#5FD39A; --accent-ink:#161411; --lilac:#2F5A2B; --butter:#5A4414; --mint:#6A3A4A;
-    --f1:#5FD39A; --f2:#9ED5B3; --f3:#F2C14E; --f4:#F09A8E; --f5:#B39CF0; --f6:#7FC1E3; --f7:#E88BB8; --f8:#D9A66A; --f9:#B8AC9A;
+    --f1:#5FD39A; --f2:#F2BFCE; --f3:#9ADB91; --f4:#E88BB8; --f5:#B39CF0; --f6:#F0A0B5; --f7:#D86A98; --f8:#F2C14E; --f9:#B8AC9A;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#161411; --card:#242019; --ink:#F5EFE6; --muted:#B5ACA0; --line:#3B352C; --chart-grid:#3B352C;
   --accent:#5FD39A; --accent-ink:#161411; --lilac:#2F5A2B; --butter:#5A4414; --mint:#6A3A4A;
-  --f1:#5FD39A; --f2:#9ED5B3; --f3:#F2C14E; --f4:#F09A8E; --f5:#B39CF0; --f6:#7FC1E3; --f7:#E88BB8; --f8:#D9A66A; --f9:#B8AC9A;
+  --f1:#5FD39A; --f2:#F2BFCE; --f3:#9ADB91; --f4:#E88BB8; --f5:#B39CF0; --f6:#F0A0B5; --f7:#D86A98; --f8:#F2C14E; --f9:#B8AC9A;
   color-scheme:dark;
 }
 
@@ -108,7 +108,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .mixbar{display:flex;height:16px;border-radius:99px;overflow:hidden;background:var(--line)}
 .mixbar i{display:block;height:100%;transition:width .2s}
 .mixlegend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.82rem;font-weight:700;color:var(--muted)}
-.mixlegend b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.mixlegend b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;flex:0 0 10px}
 .mixstats{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .mixstats .total{font-weight:700}
 .mixstats .total.bad{color:var(--f4)}
@@ -119,8 +119,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .fund.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
 .fund .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .fund .top h3{display:flex;align-items:center;gap:8px}
-.fund .top h3 b{display:inline-block;width:12px;height:12px;border-radius:50%}
-.fund .tick{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.06em}
+.fund .top h3{min-width:0}
+.fund .top h3 b{display:inline-block;flex:0 0 12px;width:12px;height:12px;border-radius:50%}
+.fund .tick{font-size:.75rem;font-weight:700;color:var(--muted);letter-spacing:.03em;white-space:nowrap;flex:0 0 auto}
 .fund .rate{font-family:var(--display);font-weight:700;font-size:1.5rem;color:var(--accent)}
 .fund .rate small{font-family:var(--body);font-size:.7rem;color:var(--muted);font-weight:700;display:block;letter-spacing:.08em;text-transform:uppercase}
 .fund .what{color:var(--muted);font-size:.92rem}
