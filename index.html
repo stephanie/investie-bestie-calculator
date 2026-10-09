@@ -110,7 +110,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .fund .rate small{font-family:var(--body);font-size:.7rem;color:var(--muted);font-weight:700;display:block;letter-spacing:.08em;text-transform:uppercase}
 .fund .what{color:var(--muted);font-size:.92rem}
 .fund .beat{font-size:.82rem;font-weight:600;background:var(--mint);color:var(--ink);border-radius:14px;padding:8px 12px;line-height:1.35}
-.fund .vibe{font-size:.8rem;font-weight:700;color:var(--muted)}
+.fund .vibe{font-size:.8rem;font-weight:700;color:color-mix(in srgb,var(--muted) 70%,var(--card))}
 .fund .vibe b{color:var(--ink)}
 .fund .alloc{display:flex;gap:8px;align-items:center;margin-top:auto;padding-top:4px}
 .fund .alloc .money{flex:0 0 110px;padding:0 10px}
@@ -395,7 +395,7 @@ $('funds').innerHTML=FUNDS.map((f,i)=>`<div class="fund" data-id="${f.id}">
   <div class="rate">${(f.rate*100).toFixed(1)}%<small>avg per year</small></div>
   <p class="what">${f.what}</p>
   <span class="beat">${f.beat}</span>
-  <span class="vibe">TL;DR: <b>${f.vibe}</b></span>
+  <span class="vibe">TL;DR <b>${f.vibe}</b></span>
   <div class="alloc"><label class="money pct" for="w-${f.id}"><input id="w-${f.id}" type="text" inputmode="decimal" value="" placeholder="0" aria-label="Percent in ${f.name}"><span>%</span></label><button class="all" type="button" data-all="${f.id}">Put it all here</button></div>
 </div>`).join('');
 $('funds').addEventListener('input',e=>{const inp=e.target.closest('input');if(!inp)return;const id=inp.id.slice(2);const v=parse(inp.value);if(v>0)W[id]=v;else delete W[id];update();});
