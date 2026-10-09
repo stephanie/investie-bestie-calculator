@@ -1,4 +1,4 @@
-# Investie Bestie Calculator
+# The Boring Portfolio
 
 A single-page calculator that shows what a lump sum plus monthly contributions could grow to in index funds that have historically beaten most active fund managers, with a rent-vs-buy section underneath.
 
