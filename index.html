@@ -1,4 +1,8 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
 <title>The Boring Portfolio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="See what your money could grow to in index funds that beat 90% of fund managers. A free calculator for women who want to invest.">
 <link rel="canonical" href="https://the-boring-portfolio.vercel.app/">
 <meta property="og:type" content="website">
@@ -53,6 +57,7 @@
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;padding-inline:16px;padding-block:28px 56px}
 .wrap{max-width:960px;margin-inline:auto;display:grid;gap:28px}
+.wrap>*{min-width:0}
 h1,h2,h3{font-family:var(--display);font-variation-settings:"SOFT" 100;text-wrap:balance;margin:0;line-height:1.05}
 h1{font-size:clamp(2.2rem,6vw,3.6rem);font-weight:700}
 h2{font-size:clamp(1.5rem,3.5vw,2.1rem);font-weight:700}
@@ -159,7 +164,7 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
 .home .inputs{grid-template-columns:repeat(4,minmax(0,1fr))}
 .home .chartbox{max-width:560px}
 @media (max-width:900px){.home .inputs{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:520px){.home .inputs{grid-template-columns:1fr}}
+@media (max-width:520px){.home .inputs{gap:12px}.calc,.home,.why{padding:18px;border-radius:22px}.mix{padding:16px}.fund{padding:16px}}
 .pct input{text-align:right}
 .verdict{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media (max-width:640px){.verdict{grid-template-columns:1fr}}
